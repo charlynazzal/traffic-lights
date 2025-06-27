@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import classification_report, confusion_matrix
 
 # 1. Load and Preprocess Data
 #--------------------------------
@@ -114,9 +115,22 @@ model.eval()
 with torch.no_grad():
     test_outputs = model(X_test_tensor)
     _, predicted = torch.max(test_outputs.data, 1)
+
+    # Convert tensors to numpy arrays for sklearn
+    y_test_np = y_test_tensor.numpy()
+    predicted_np = predicted.numpy()
     
-    total = y_test_tensor.size(0)
-    correct = (predicted == y_test_tensor).sum().item()
-    
-    accuracy = 100 * correct / total
-    print(f'\\nFinal Accuracy on TEST data: {accuracy:.2f}%') 
+    # Calculate basic accuracy
+    accuracy = 100 * (predicted == y_test_tensor).sum().item() / y_test_tensor.size(0)
+    print(f'\\nFinal Accuracy on TEST data: {accuracy:.2f}%\\n')
+
+    # Print the detailed classification report
+    print("Classification Report:")
+    report = classification_report(y_test_np, predicted_np, target_names=label_encoder.classes_)
+    print(report)
+
+    # Print the confusion matrix
+    print("Confusion Matrix:")
+    cm = confusion_matrix(y_test_np, predicted_np)
+    print(cm)
+    print("\\n(Rows: True Labels, Columns: Predicted Labels)") 
