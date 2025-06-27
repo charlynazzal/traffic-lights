@@ -177,4 +177,7 @@ poetry.lock
 .pyright_cache/
 
 # Ruff
-.ruff_cache/ 
+.ruff_cache/
+
+# Kaggle credentials
+kaggle.json 
